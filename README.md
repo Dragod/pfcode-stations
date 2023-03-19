@@ -2,6 +2,18 @@
 
 ![alt text](./public/img/app/app.jpg "Pfcode Stations")
 
+## Functionality
+
+- Save your favorite radio stations to a document db such as Sqlite3
+- Register user
+- Login user
+- API endpoints
+- Add new station
+- Update existing station
+- Delete existing station
+- Filter stations
+- Show favorite stations
+
 ## Run
 
 ```shell
