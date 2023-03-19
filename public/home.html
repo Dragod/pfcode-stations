@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>Pfcode - Web radio</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="flex flex-column pa-lr-1 pa-b-1 flex-1 sidebar overflow-auto bg-opacity">
+
+        <div class="create-station pa-b-1">
+
+            <h2 class="pa-tb-1">Create new station</h2>
+
+            <div class="flex flex-column">
+                <label class="radio-name">Name</label>
+                <input id="radio-name" type="text" class="radio-name" placeholder="Station name"/>
+            </div>
+
+            <div class="flex flex-column">
+                <label class="radio-name">Url</label>
+                <input id="radio-url" type="text" class="radio-url" placeholder="Ex:https://icecast.it/radio.mp3"/>
+            </div>
+
+            <div class="flex flex-row pa-b-1">
+                <input id="radio-fav" type="checkbox" class="radio-fav"/>
+                <label class="radio-fav">Mark as favorite</label>
+            </div>
+
+            <button id="radio-add" type="submit" class="radio-add" title="Add new station">Add</button>
+            </div>
+            <div class="update-station pa-b-1">
+                <hr/>
+                <h2 class="pa-tb-1">Update station</h2>
+                <div class="flex flex-column">
+                    <label class="id">Id</label>
+                    <input id="radio-id-update" type="text" class="" placeholder="Existing radio ID you want to update"/>
+                    <label class="name">Update name</label>
+                    <input id="radio-update-name" type="text" class="radio-update" placeholder="New station name"/>
+                    <label class="url">Update url</label>
+                    <input id="radio-update-url" type="text" class="radio-update-url" placeholder="New station url"/>
+                    <div class="flex flex-row pa-b-1">
+                        <input id="radio-update-fav" type="checkbox" class="radio-fav" placeholder="favorite"/>
+                        <label class="fav radio-fav">Mark as favorite</label>
+                    </div>
+                </div>
+                <div>
+                    <button id="update-station" type="submit" title="Update existing station">Update</button>
+                </div>
+            </div>
+            <div class="get-station-id pa-b-1">
+
+                <hr/>
+                <h2 class="pa-tb-1">Get station id</h2>
+                <div class="flex flex-column pa-b-1">
+                    <label class="radio-name">Station Name</label>
+                    <input id="station-name" type="text" class="" placeholder="Type station name you need to get an ID from"/>
+                </div>
+                <div>
+                    <button id="get-station-id" type="submit" title="Get station ID">Get ID</button>
+                </div>
+                <div id="station-by-id" class="flex flex-column"></div>
+                </div>
+
+        <div class="delete-station">
+
+
+            <div>
+                <hr/>
+                <h2 class="pa-tb-1">Delete station</h2>
+                <div class="flex flex-column">
+                    <label class="radio-name">Id</label>
+                    <input id="radio-id" type="text" class="radio-id" placeholder="Delete station by ID"/>
+                </div>
+                <div class="pa-t-1">
+                    <button id="delete-station" title="Delete station permanently">Delete</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="flex flex-2 pa-lr-1 flex-column">
+        <div class="flex flex-row">
+            <h2 class="pa-l-1 pa-t-1 flex flex-1">Station list</h2>
+            <a href="#" class="align-self-center flex pa-t-1" title="Github repo"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-github flex align-self-center white" viewBox="0 0 16 16">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+            </svg></a></div>
+        <div class="flex flex-column pa-lr-1 pa-t-1">
+            <label>Filter by name</label>
+            <input type="text" id="filter" class="" placeholder="Filter by name...">
+            </div>
+            <div id="station-list" class="flex flex-1 overflow-hidden"></div>
+    </div>
+
+    <div class="flex flex-1 flex-column overflow-auto full-height bg-opacity">
+        <h2 class="pa-lr-1 pa-t-1">Listen station</h2>
+        <div id="list" class="overflow-auto flex flex-1 flex-column list-station-empty">
+
+            <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" fill="currentColor" class="bi bi-broadcast flex self-center" viewBox="0 0 16 16">
+                <path d="M3.05 3.05a7 7 0 0 0 0 9.9.5.5 0 0 1-.707.707 8 8 0 0 1 0-11.314.5.5 0 0 1 .707.707zm2.122 2.122a4 4 0 0 0 0 5.656.5.5 0 1 1-.708.708 5 5 0 0 1 0-7.072.5.5 0 0 1 .708.708zm5.656-.708a.5.5 0 0 1 .708 0 5 5 0 0 1 0 7.072.5.5 0 1 1-.708-.708 4 4 0 0 0 0-5.656.5.5 0 0 1 0-.708zm2.122-2.12a.5.5 0 0 1 .707 0 8 8 0 0 1 0 11.313.5.5 0 0 1-.707-.707 7 7 0 0 0 0-9.9.5.5 0 0 1 0-.707zM10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"/>
+            </svg>
+
+            <span>Click a station to start listen</span>
+            <small>Station will autoplay</small>
+
+        </div>
+        <!-- <div id="metadata-container"></div>
+        <button id="play-button" style="display: none;">Play</button> -->
+    </div>
+
+    <!-- pop-up dialog box, containing a form -->
+
+<dialog id="delete-dialog">
+    <form method="dialog">
+        <p>Are you sure you want to delete this station?</p>
+        <div>
+            <button id="radio-confirm-delete" type="submit" class="radio-add primary" title="Confirm station deletion">Confirm</button>
+            <button id="cancel" type="reset" title="Cancel station deletion">Cancel</button>
+        </div>
+    </form>
+</dialog>
+
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js" integrity="sha512-LUKzDoJKOLqnxGWWIBM4lzRBlxcva2ZTztO8bTcWPmDSpkErWx0bSP4pdsjNH8kiHAUPaT06UXcb+vOEZH+HpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+
+<script src="https://unpkg.com/axios/dist/axios.min.js" integrity="sha384-es0HiLUGcrrPhNqo0EwhhpDeHORxK3d+EVccCFO0RFLRxu7d77SO3Y1/rR2c/Vdl" crossorigin="anonymous"></script>
+
+
+<script type="text/javascript"  defer src="./js/client.js"></script>
+
+</body>
+
+</html>

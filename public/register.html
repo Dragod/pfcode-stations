@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<meta charset="UTF-8">
+
+		<title>Register</title>
+
+		<link rel="stylesheet" href="./style.css">
+
+	</head>
+
+	<body class="">
+
+		<div class="flex flex-column register-outer">
+
+			<div class="flex flex-column">
+
+				<div class="register-form flex pa-all-1 form-container flex-column">
+
+					<div class="flex flex-column ma-b-half">
+
+						<div class="flex flex-row">
+
+							<label class="flex flex-1" for="email">Email</label>
+
+							<small class="flex self-center">Required</small>
+
+						</div>
+
+						<input class="" id="email" name="email" type="email" placeholder="Email" required>
+
+					</div>
+
+					<div class="flex flex-column ma-b-half">
+
+						<div class="flex flex-row">
+
+							<label class="flex flex-1" for="username">Username</label>
+
+							<small class="flex self-center">Required</small>
+
+						</div>
+
+						<input class="" id="username" name="username" type="text" placeholder="Username" required>
+
+					</div>
+
+					<div class="flex flex-column ma-b-half">
+
+						<div class="flex flex-row">
+
+							<label class="flex flex-1" for="password">Password</label>
+
+							<small class="flex self-center">Required</small>
+
+						</div>
+
+						<input class="" id="password" name="password" type="password" placeholder="https://bitwarden.com/password-generator/" required>
+
+					</div>
+
+					<button id="register" class="ma-t-1" type="submit">
+						Register
+					</button>
+
+				</div>
+
+			</div>
+
+			<div class="flex items-center justify-between"></div>
+
+			<div id="side-error" class="ma-b-2">
+
+				<div id="error" class="validation-errors pa-all-1 ma-t-1"></div>
+
+			</div>
+
+		</div>
+
+		<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+
+		<script src="https://unpkg.com/validator@latest/validator.min.js"></script>
+
+		<script src="https://unpkg.com/axios/dist/axios.min.js" integrity="sha384-es0HiLUGcrrPhNqo0EwhhpDeHORxK3d+EVccCFO0RFLRxu7d77SO3Y1/rR2c/Vdl" crossorigin="anonymous"></script>
+
+		<script type="text/javascript"  defer src="./js/register.js"></script>
+
+	</body>
+
+</html>

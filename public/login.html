@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <!-- include Tailwind CSS styles -->
+  <!-- <link href="https://unpkg.com/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet"> -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body class="">
+  <div class="flex flex-column login-outer">
+    <div class="flex flex-column">
+    <h1 class="flex pa-l-1">Login</h1>
+    <form class="login-form flex pa-all-1 bg-opacity flex-column" action="/login" method="POST">
+    <div class="flex flex-column">
+        <label class="" for="email">Email</label>
+        <input class="" id="email" name="email" type="email" required>
+    </div>
+    <div class="flex flex-column">
+        <label class="" for="password">Password</label>
+        <input class="" id="password" name="password" type="password" required>
+    </div>
+    </form>
+    <button id="login" class="ma-t-1 ma-lr-1" type="submit">
+        Login
+    </button>
+    </div>
+    <div class="flex items-center justify-between">
+      <div id="error" class="error"></div>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js" integrity="sha384-es0HiLUGcrrPhNqo0EwhhpDeHORxK3d+EVccCFO0RFLRxu7d77SO3Y1/rR2c/Vdl" crossorigin="anonymous"></script>
+
+<script type="text/javascript"  defer src="./js/login.js"></script>
+
+<script>
+
+
+
+$(document).ready(function($) {
+
+
+})
+</script>
+</body>
+</html>
