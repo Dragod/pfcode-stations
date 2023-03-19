@@ -17,6 +17,7 @@ A nodejs express server that store data in Sqlite3
 - Filter stations
 - Show favorite stations
 - Listen station
+- Server and client side validation
 
 ## Run
 
