@@ -4,7 +4,7 @@
 
 ## What is under the hood
 
-A nodejs express server that store the data in Sqlite3
+A nodejs express server that store data in Sqlite3
 
 ## Functionality
 
