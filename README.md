@@ -1,5 +1,7 @@
 # pfcode-stations
 
+![alt text](./public/img/app/app.jpg "Pfcode Stations")
+
 ## Run
 
 ```shell
