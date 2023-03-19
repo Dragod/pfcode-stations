@@ -2,9 +2,12 @@
 
 ![alt text](./public/img/app/app.jpg "Pfcode Stations")
 
+## What is under the hood
+
+A nodejs express server that store the data in Sqlite3
+
 ## Functionality
 
-- Save your favorite radio stations to a document db such as Sqlite3
 - Register user
 - Login user
 - API endpoints
