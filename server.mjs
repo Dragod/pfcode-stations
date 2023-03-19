@@ -28,7 +28,7 @@ dotenv.config()
 
 // open a database connection
 
-let db = new sqlite3.Database('./pfcode_radio.db', (err) => {
+let db = new sqlite3.Database('./pfcode-stations.db', (err) => {
 
     if (err) {
 
@@ -36,7 +36,7 @@ let db = new sqlite3.Database('./pfcode_radio.db', (err) => {
 
     }
 
-    console.log('Connected to radio database.')
+    console.log('\nConnected to pfcode-stations database.')
 
 })
 
@@ -45,6 +45,10 @@ const PORT = process.env.PORT || 3000
 const HOST = process.env.HOST || "http://localhost"
 
 const COOKIE_SECRET = process.env.COOKIE_SECRET
+
+const REGISTER_ENDPOINT = process.env.REGISTER_ENDPOINT_ENABLED
+
+console.log(REGISTER_ENDPOINT)
 
 const __filename = fileURLToPath(import.meta.url)
 
@@ -108,7 +112,7 @@ app.use(session({
 
     cookie: { maxAge: oneDay },
 
-    name: uuidv4()
+    name: 'pfcode-stations'
 
 }))
 
@@ -137,6 +141,25 @@ const requireSession = (req, res, next) => {
 
 }
 
+// Define a middleware function to check if the register endpoint is enabled
+
+function checkRegisterEndpoint(req, res, next) {
+
+    if (REGISTER_ENDPOINT === 'true') {
+
+      // If the endpoint is enabled, call the next middleware
+
+        next()
+
+    } else {
+
+      // If the endpoint is disabled, return a 404 Not Found error
+
+        res.sendFile(__dirname + '/public/errors/404.html')
+    }
+
+}
+
 // Create a rate limiter for login attempts
 
 const loginLimiter = rateLimit({
@@ -149,7 +172,7 @@ const loginLimiter = rateLimit({
 
 })
 
-app.get('/session-data', requireSession, function(req, res) {
+app.get('/api/session-data', requireSession, function(req, res) {
 
     res.json({
 
@@ -160,7 +183,7 @@ app.get('/session-data', requireSession, function(req, res) {
 
 })
 
-app.get('/stations', requireSession, (req, res) => {
+app.get('/api/stations', requireSession, (req, res) => {
 
     let sql = `SELECT * FROM stations ORDER BY name asc`
 
@@ -178,7 +201,7 @@ app.get('/stations', requireSession, (req, res) => {
 
 })
 
-app.get('/stations/fav', requireSession, (req, res) => {
+app.get('/api/stations/fav', requireSession, (req, res) => {
 
     const sql = 'SELECT * FROM stations WHERE favorite = 1 ORDER BY name ASC';
 
@@ -197,7 +220,7 @@ app.get('/stations/fav', requireSession, (req, res) => {
 })
 
 
-app.get('/stations/:name', requireSession, (req, res) => {
+app.get('/api/stations/:name', requireSession, (req, res) => {
 
     console.log(req.params.name)
 
@@ -219,7 +242,7 @@ app.get('/stations/:name', requireSession, (req, res) => {
 
 })
 
-app.post('/stations', requireSession, (req, res) => {
+app.post('/api/stations', (req, res) => {
 
     let stationInsert = `INSERT INTO stations (name, url,favorite) VALUES ("${req.body.name}", "${req.body.url}", ${req.body.favorite})`
 
@@ -239,7 +262,7 @@ app.post('/stations', requireSession, (req, res) => {
 
 })
 
-app.put('/stations/:id', requireSession,(req, res) => {
+app.put('/api/stations/:id',(req, res) => {
 
     console.log("this is req.body",req.body)
 
@@ -295,7 +318,7 @@ app.put('/stations/:id', requireSession,(req, res) => {
 
 })
 
-app.delete('/stations/:id', requireSession, (req, res) => {
+app.delete('/api/stations/:id', (req, res) => {
 
     let sql = `DELETE FROM stations WHERE id = "${req.params.id}"`
 
@@ -334,7 +357,7 @@ app.get('/api/users', requireSession, (req, res) => {
 
 })
 
-app.get('/register', (req, res) => {
+app.get('/register', checkRegisterEndpoint, (req, res) => {
     res.sendFile(__dirname + '/public/register.html')
 })
 
@@ -347,7 +370,7 @@ app.post('/api/users',[
     body('password').isStrongPassword({minLength: 8}).withMessage(`
             Password empty or min length < 8`)
 
-], requireSession, async (req, res, next) => {
+], async (req, res, next) => {
 
     res.set('Cache-Control', 'no-store')
 
@@ -518,9 +541,31 @@ app.use(custom401)
 
 app.use(custom500)
 
+// Define a function to restart the server
+
+function restartServer() {
+
+    console.log('Restarting server...')
+
+    server.close(() => {
+
+        console.log('Server closed')
+
+        // Start the server again
+
+        server.listen(PORT, () => {
+
+            console.log(`\nPfcode-stations is running on: ${HOST}:${PORT}`)
+
+        })
+
+    })
+
+}
+
 app.listen(PORT, () => {
 
-    console.log(`Pfcode-stations is running on: ${HOST}:${PORT}`)
+    console.log(`\nPfcode-stations is running on: ${HOST}:${PORT}`)
 
 })
 
@@ -534,7 +579,7 @@ process.on('SIGINT', () => {
 
         }
 
-        console.log('Closed Pfcode-stations database connection.')
+        console.log('\nClosed Pfcode-stations database connection.')
 
         process.exit(0)
 

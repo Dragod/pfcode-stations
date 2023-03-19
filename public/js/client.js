@@ -10,63 +10,63 @@ let unfav = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill
 const baseUrl = "http://localhost:5050"
 
 
-function getAll()
-{
-    let config = {
-        method: 'get',
-        url: 'http://localhost:5050/radio/',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    };
+// function getAll()
+// {
+//     let config = {
+//         method: 'get',
+//         url: `${baseUrl}/radio/`,
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     };
 
-    axios(config)
-    .then(function (response) {
+//     axios(config)
+//     .then(function (response) {
 
-        //console.log(JSON.stringify(response.data))
+//         //console.log(JSON.stringify(response.data))
 
-        let data = response.data
+//         let data = response.data
 
-        let html = `<div class='flex flex-column pa-all-1' draggable='true'>`
+//         let html = `<div class='flex flex-column pa-all-1' draggable='true'>`
 
-        for (const radio of data) {
+//         for (const radio of data) {
 
-            html += `<div title='${radio.name}' class='flex flex-column js-radio radio-guide' draggable='true'>`
-            html += `<div class="pa-b-half flex flex-row">`
-            html += `<div class='value flex-1'>${radio.name}</div>`;
-            html += `</div>`
-            html += ` <div class="flex flex-column">`
-            html += `
-                <audio controls>
-                    <source src='${radio.url}' type='audio/ogg'>
-                    <source src='${radio.url}' type='audio/mpeg'>
-                    <source src='${radio.url}' type='audio/mp3'>
-                    Your browser does not support the audio element.
-                </audio>`
-            html += `</div>`
-            html += `</div>`
-        }
+//             html += `<div title='${radio.name}' class='flex flex-column js-radio radio-guide' draggable='true'>`
+//             html += `<div class="pa-b-half flex flex-row">`
+//             html += `<div class='value flex-1'>${radio.name}</div>`;
+//             html += `</div>`
+//             html += ` <div class="flex flex-column">`
+//             html += `
+//                 <audio controls>
+//                     <source src='${radio.url}' type='audio/ogg'>
+//                     <source src='${radio.url}' type='audio/mpeg'>
+//                     <source src='${radio.url}' type='audio/mp3'>
+//                     Your browser does not support the audio element.
+//                 </audio>`
+//             html += `</div>`
+//             html += `</div>`
+//         }
 
-        html += `</div>`
+//         html += `</div>`
 
-        document.getElementById('list').innerHTML = html
+//         document.getElementById('list').innerHTML = html
 
 
 
-    })
-    .catch(function (error) {
+//     })
+//     .catch(function (error) {
 
-        console.log(error)
+//         console.log(error)
 
-    })
+//     })
 
-}
+// }
 
 function getList()
 {
     let config = {
         method: 'get',
-        url: `${baseUrl}/stations/`,
+        url: `${baseUrl}/api/stations/`,
         headers: {
             'Content-Type': 'application/json'
         }
@@ -307,7 +307,7 @@ $(document).ready(function($) {
 
             let config = {
                 method: 'post',
-                url: `${baseUrl}/stations/`,
+                url: `${baseUrl}/api/stations/`,
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -337,7 +337,7 @@ $(document).ready(function($) {
 
         let radioId = document.getElementById("radio-id").value
 
-        const res = await axios.delete(`${baseUrl}/stations/${radioId}`)
+        const res = await axios.delete(`${baseUrl}/api/stations/${radioId}`)
 
         res.status === 200 ? console.log("Station deleted") : console.log("Error")
 
@@ -378,7 +378,7 @@ $(document).ready(function($) {
 
         console.log(data)
 
-        const res = await axios.put(`${baseUrl}/stations/${radioIdUpdate}`, data)
+        const res = await axios.put(`${baseUrl}/api/stations/${radioIdUpdate}`, data)
 
         res.status === 200 ? console.log(`Station name: ${data.name} updated`) : console.log("Error updating station")
 
@@ -394,7 +394,7 @@ $(document).ready(function($) {
 
         console.log(stationName)
 
-        const res = await axios.get(`${baseUrl}/stations/${stationName}`)
+        const res = await axios.get(`${baseUrl}/api/stations/${stationName}`)
 
         console.log(JSON.stringify(res.data))
 
