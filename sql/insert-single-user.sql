@@ -1,3 +1,3 @@
-insert into users (name, email, password, favorite, role)
+insert into users (name, email, password, role, created)
 VALUES
-("Fabio","reg@pfcode.net","password",0,"admin")
+("YourName","myemail@email,com","Mypassword","user", NOW());
