@@ -2,7 +2,7 @@ $(document).ready(function($) {
 
     const baseUrl = "http://localhost:5050"
 
-    apiEndpoint = `${baseUrl}/api/users/`;
+    let apiEndpoint = `${baseUrl}/api/users/`;
 
     let register = document.getElementById('register')
 
@@ -38,7 +38,7 @@ $(document).ready(function($) {
         }
 
         axios(config)
-        .then(function (response) {
+        .then(function () {
 
             window.location.href = '/login';
 

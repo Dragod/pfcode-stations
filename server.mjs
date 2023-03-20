@@ -1,4 +1,4 @@
-import express, { json } from "express"
+import express from "express"
 
 import morgan from "morgan"
 
@@ -12,7 +12,7 @@ import rateLimit from "express-rate-limit"
 
 import bcrypt from "bcrypt"
 
-import {body, cookie, validationResult} from "express-validator"
+import {body, validationResult} from "express-validator"
 
 import session from "express-session"
 
@@ -94,7 +94,6 @@ app.use(express.static(__dirname + '/public'))
 app.use(favicon('favicon.ico'))
 
 // Middleware to check for valid session
-
 
 app.use(session({
 
