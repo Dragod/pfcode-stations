@@ -28,8 +28,8 @@ npm i && nano .env
 In the ```.env``` file add the following:
 
 ```shell
-HOST=https://mywebsite.com
-PORT=2345
+HOST=http://localhost
+PORT=5050
 COOKIE_SECRET=myCookieSecret
 REGISTER_ENDPOINT_ENABLED=false
 ```
