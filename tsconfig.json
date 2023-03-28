@@ -1,0 +1,21 @@
+{
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "compilerOptions": {
+      "module": "Node16", // or "NodeNext"
+      "target": "ESNext",
+      "lib": [
+        "dom"
+      ],
+      "moduleResolution": "Node16", // or "NodeNext"
+      "esModuleInterop": true,
+      "rootDir": "./src",
+      "strict": true,
+      "outDir": "./dist",
+      "sourceMap": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
+
+
+

@@ -9,7 +9,7 @@ body {
     height: 100%;
     display: flex;
     flex: 1;
-    background: #202020 url("./img/1136883.jpg");
+    background: #202020 url("../img/1136883.jpg");
     background-position: inherit;
     background-size: cover;
     overflow: hidden;

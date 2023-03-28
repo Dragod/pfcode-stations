@@ -1,4 +1,4 @@
-import express from "express"
+import express from 'express'
 
 import morgan from "morgan"
 
@@ -6,7 +6,9 @@ import { fileURLToPath } from 'url'
 
 import { dirname } from 'path'
 
-import sqlite3 from "sqlite3"
+//import path from 'path'
+
+import sqlite3 from 'sqlite3'
 
 import rateLimit from "express-rate-limit"
 
@@ -16,19 +18,34 @@ import {body, validationResult} from "express-validator"
 
 import session from "express-session"
 
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 
 import helmet from "helmet"
 
 import favicon from "serve-favicon"
 
-import * as dotenv from 'dotenv'
+import dotenv from 'dotenv'
 
 dotenv.config()
 
+const __filename = fileURLToPath(import.meta.url)
+
+const __dirname = dirname(__filename)
+
+const path = __dirname.replace("\\src", "")
+
+declare module 'express-session' {
+    interface SessionData {
+        loggedIn: boolean
+        email: string
+
+    }
+
+}
+
 // open a database connection
 
-let db = new sqlite3.Database('./pfcode-stations.db', (err) => {
+let db = new sqlite3.Database('./pfcode-stations.db', (err: any) => {
 
     if (err) {
 
@@ -50,10 +67,6 @@ const REGISTER_ENDPOINT = process.env.REGISTER_ENDPOINT_ENABLED
 
 console.log(REGISTER_ENDPOINT)
 
-const __filename = fileURLToPath(import.meta.url)
-
-const __dirname = dirname(__filename)
-
 const oneDay = 1000 * 60 * 60 * 24;
 
 let app = express()
@@ -64,6 +77,7 @@ const limiter = rateLimit({
 
     windowMs: 60 * 60 * 1000, // 1 hour window
     max: 100000000, // 100 requests per window
+
 })
 
 // apply the limiter middleware to all requests
@@ -89,7 +103,7 @@ app.use(express.json())
 
 app.use(express.urlencoded({ extended: true }))
 
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(path + '/public'))
 
 app.use(favicon('favicon.ico'))
 
@@ -97,25 +111,19 @@ app.use(favicon('favicon.ico'))
 
 app.use(session({
 
-    genid: () => {
-
-        return uuidv4() // use UUIDs for session IDs
-
-    },
-
-    secret: COOKIE_SECRET,
+    secret: `${COOKIE_SECRET}`,
 
     resave: false,
 
     saveUninitialized: false,
 
-    cookie: { maxAge: oneDay },
+    cookie: { "maxAge": oneDay },
 
     name: 'pfcode-stations'
 
 }))
 
-const requireSession = (req, res, next) => {
+const requireSession = (req: any, res: any, next: any) => {
 
     console.log("Checking for valid session")
 
@@ -142,7 +150,7 @@ const requireSession = (req, res, next) => {
 
 // Define a middleware function to check if the register endpoint is enabled
 
-function checkRegisterEndpoint(req, res, next) {
+function checkRegisterEndpoint(req: any, res: any, next: any) {
 
     if (REGISTER_ENDPOINT === 'true') {
 
@@ -154,7 +162,8 @@ function checkRegisterEndpoint(req, res, next) {
 
       // If the endpoint is disabled, return a 404 Not Found error
 
-        res.sendFile(__dirname + '/public/errors/404.html')
+        res.sendFile(path + '/public/errors/404.html')
+
     }
 
 }
@@ -171,7 +180,7 @@ const loginLimiter = rateLimit({
 
 })
 
-app.get('/api/session-data', requireSession, function(req, res) {
+app.get('/api/session-data', requireSession, function(req: any, res: any) {
 
     res.json({
 
@@ -182,32 +191,36 @@ app.get('/api/session-data', requireSession, function(req, res) {
 
 })
 
-app.get('/api/stations', requireSession, (req, res) => {
+app.get('/api/stations', requireSession, (req: any, res: any) => {
 
     let sql = `SELECT * FROM stations ORDER BY name asc`
 
-    db.all(sql, [], (err, rows) => {
+    db.all(sql, [], (err:any, rows: any) => {
 
         if (err) {
 
-        return res.status(500).json(err)
+            return res.status(500).json(err)
 
         }
+
         //console.log(rows)
+
         res.json(rows)
 
     })
 
 })
 
-app.get('/api/stations/fav', requireSession, (req, res) => {
+app.get('/api/stations/fav', requireSession, (req:any, res: any) => {
 
     const sql = 'SELECT * FROM stations WHERE favorite = 1 ORDER BY name ASC';
 
-    db.all(sql, [], (err, rows) => {
+    db.all(sql, [], (err:any, rows: any) => {
 
         if (err) {
+
             return res.status(500).json(err)
+
         }
 
         console.log(rows)
@@ -218,8 +231,7 @@ app.get('/api/stations/fav', requireSession, (req, res) => {
 
 })
 
-
-app.get('/api/stations/:name', requireSession, (req, res) => {
+app.get('/api/stations/:name', requireSession, (req: any, res: any) => {
 
     console.log(req.params.name)
 
@@ -227,7 +239,7 @@ app.get('/api/stations/:name', requireSession, (req, res) => {
 
     console.log(sql)
 
-    db.get(sql, [], (err, row) => {
+    db.get(sql, [], (err: any, row: any) => {
 
         if (err) {
 
@@ -241,13 +253,13 @@ app.get('/api/stations/:name', requireSession, (req, res) => {
 
 })
 
-app.post('/api/stations', (req, res) => {
+app.post('/api/stations', (req: any, res: any) => {
 
     let stationInsert = `INSERT INTO stations (name, url,favorite) VALUES ("${req.body.name}", "${req.body.url}", ${req.body.favorite})`
 
     console.log(stationInsert)
 
-    db.run(stationInsert, [], (err,row) => {
+    db.run(stationInsert, [], (err: any, row: any) => {
 
         if (err) {
 
@@ -261,17 +273,13 @@ app.post('/api/stations', (req, res) => {
 
 })
 
-app.put('/api/stations/:id',(req, res) => {
-
-    console.log("this is req.body",req.body)
+app.put('/api/stations/:id',(req: any, res: any) => {
 
     let data = req.body
 
-    console.log("this is id",data.id)
+    let sql: string
 
-    let sql
-
-    if(req.body.url === undefined || req.body.url === "" || req.body.url === null){
+    if (req.body.url === undefined || req.body.url === "" || req.body.url === null){
 
         sql = `
             UPDATE stations
@@ -301,7 +309,7 @@ app.put('/api/stations/:id',(req, res) => {
 
     console.log(sql)
 
-    db.run(sql, [], (err, row) => {
+    db.run(sql, [], (err: any, row: any) => {
 
         if (err) {
 
@@ -317,11 +325,11 @@ app.put('/api/stations/:id',(req, res) => {
 
 })
 
-app.delete('/api/stations/:id', (req, res) => {
+app.delete('/api/stations/:id', (req: any, res: any) => {
 
     let sql = `DELETE FROM stations WHERE id = "${req.params.id}"`
 
-    db.run(sql, [], (err, row) => {
+    db.run(sql, [], (err: any, row: any) => {
 
         if (err) {
 
@@ -335,29 +343,32 @@ app.delete('/api/stations/:id', (req, res) => {
 
 })
 
-app.get('/api/users', requireSession, (req, res) => {
+app.get('/api/users',
+    requireSession,
+    (req: any, res: any) => {
 
-    db.all('SELECT * FROM users', (err, rows) => {
+        db.all('SELECT * FROM users', (err: any, rows: any) => {
 
-        if (err) {
+            if (err) {
 
-        console.error(err.message)
+                console.error(err.message)
 
-        res.status(500).json({ message: 'Internal server error' });
+                res.status(500).json({message: 'Internal server error'});
 
-        }
-        else {
+            } else {
 
-            res.json(rows)
+                res.json(rows)
 
-        }
+            }
+
+        })
 
     })
 
-})
+app.get('/register', checkRegisterEndpoint, (req: any, res: any) => {
 
-app.get('/register', checkRegisterEndpoint, (req, res) => {
-    res.sendFile(__dirname + '/public/register.html')
+    res.sendFile(path + '/public/register.html')
+
 })
 
 app.post('/api/users',[
@@ -369,7 +380,7 @@ app.post('/api/users',[
     body('password').isStrongPassword({minLength: 8}).withMessage(`
             Password empty or min length < 8`)
 
-], async (req, res, next) => {
+], async (req: any, res: any, next: any) => {
 
     res.set('Cache-Control', 'no-store')
 
@@ -397,7 +408,7 @@ app.post('/api/users',[
 
     [username, email, hashedPassword],
 
-    (err) => {
+    (err: any) => {
 
         if (err) {
 
@@ -432,19 +443,20 @@ app.post('/api/users',[
 
 })
 
-app.get('/login', (req, res) => {
+app.get('/login',
+    (req: any, res: any) => {
 
-    res.sendFile(__dirname + '/public/login.html')
+        res.sendFile(path + '/public/login.html')
 
-})
+    })
 
-app.post('/login', loginLimiter, async (req, res) => {
+app.post('/login', loginLimiter, async (req: any, res: any) => {
 
     const { email, password } = req.body
 
     console.log('Login attempt:', email, password)
 
-    db.get('SELECT * FROM users WHERE email = ?', email, async (err, row) => {
+    db.get('SELECT * FROM users WHERE email = ?', email, async (err: any, row: any) => {
 
         if (err) {
 
@@ -502,19 +514,19 @@ app.post('/login', loginLimiter, async (req, res) => {
 
 })
 
-app.get('/', requireSession, async (req, res) => {
+app.get('/', requireSession, async (req: any, res: any) => {
 
-    res.sendFile(__dirname + '/public/home.html')
+    res.sendFile(path + '/public/home.html')
 
 })
 
 // Custom 401 Unauthorized middleware function
 
-function custom401(req, res, next) {
+function custom401(req: any, res: any, next: any) {
 
     const error = new Error('Unauthorized')
 
-    error.status = 401
+    //error.status = 401
 
     // TODO: Redirect to login page
 
@@ -526,9 +538,9 @@ function custom401(req, res, next) {
 
 // Custom 500 Internal Server Error middleware function
 
-function custom500(err, req, res, next) {
+function custom500(err: string, req: any, res: any, next: any) {
 
-    console.error(err.stack)
+    console.error(err)
 
     res.status(500).send('Internal Server Error')
 
@@ -540,27 +552,6 @@ app.use(custom401)
 
 app.use(custom500)
 
-// Define a function to restart the server
-
-function restartServer() {
-
-    console.log('Restarting server...')
-
-    server.close(() => {
-
-        console.log('Server closed')
-
-        // Start the server again
-
-        server.listen(PORT, () => {
-
-            console.log(`\nPfcode-stations is running on: ${HOST}:${PORT}`)
-
-        })
-
-    })
-
-}
 
 app.listen(PORT, () => {
 
@@ -570,7 +561,7 @@ app.listen(PORT, () => {
 
 process.on('SIGINT', () => {
 
-    db.close((err) => {
+    db.close((err: any) => {
 
         if (err) {
 
