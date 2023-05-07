@@ -1,6 +1,8 @@
 $(document).ready(function($) {
 
-    const baseUrl = "http://localhost:5050"
+    const socket = io()
+
+    const baseUrl = socket.io.uri
 
     let apiEndpoint = `${baseUrl}/api/users/`;
 

@@ -1,4 +1,10 @@
-import express from "express"
+import express from 'express'
+
+import http from 'http'
+
+import { Server } from 'socket.io'
+
+import cors from 'cors'
 
 import morgan from "morgan"
 
@@ -16,13 +22,19 @@ import {body, validationResult} from "express-validator"
 
 import session from "express-session"
 
-import { v4 as uuidv4 } from 'uuid';
+//import { v4 as uuidv4 } from 'uuid';
 
-import helmet from "helmet"
+//import helmet from "helmet"
 
 import favicon from "serve-favicon"
 
 import * as dotenv from 'dotenv'
+
+const app = express()
+
+const server = http.createServer(app)
+
+const io = new Server(server)
 
 dotenv.config()
 
@@ -36,19 +48,24 @@ let db = new sqlite3.Database('./pfcode-stations.db', (err) => {
 
     }
 
-    console.log('\nConnected to pfcode-stations database.')
+    console.log('\nConnected to pfcode-stations database')
 
 })
 
-const PORT = process.env.PORT || 3000
 
-const HOST = process.env.HOST || "http://localhost"
+const PORT = process.env.PORT
+
+const HOST = process.env.HOST
+
+let url = ''
+
+HOST.includes('localhost') ? url = `${HOST}:${PORT}` : url = HOST
 
 const COOKIE_SECRET = process.env.COOKIE_SECRET
 
 const REGISTER_ENDPOINT = process.env.REGISTER_ENDPOINT_ENABLED
 
-console.log(REGISTER_ENDPOINT)
+console.log("\nCan register user:",REGISTER_ENDPOINT)
 
 const __filename = fileURLToPath(import.meta.url)
 
@@ -56,7 +73,6 @@ const __dirname = dirname(__filename)
 
 const oneDay = 1000 * 60 * 60 * 24;
 
-let app = express()
 
 app.disable('x-powered-by')
 
@@ -83,6 +99,12 @@ app.use(limiter)
 //     })
 // )
 
+const corsOptions = {
+    origin: url
+}
+
+app.use(cors(corsOptions))
+
 app.use(morgan('dev'))
 
 app.use(express.json())
@@ -96,12 +118,6 @@ app.use(favicon('favicon.ico'))
 // Middleware to check for valid session
 
 app.use(session({
-
-    genid: () => {
-
-        return uuidv4() // use UUIDs for session IDs
-
-    },
 
     secret: COOKIE_SECRET,
 
@@ -178,6 +194,7 @@ app.get('/api/session-data', requireSession, function(req, res) {
         user: req.session,
 
         isAuthenticated: req.session.loggedIn
+
     })
 
 })
@@ -438,6 +455,16 @@ app.get('/login', (req, res) => {
 
 })
 
+app.get('/logout', (req, res) => {
+
+    req.session.destroy()
+
+    res.redirect('/login')
+
+})
+
+
+
 app.post('/login', loginLimiter, async (req, res) => {
 
     const { email, password } = req.body
@@ -483,9 +510,11 @@ app.post('/login', loginLimiter, async (req, res) => {
 
             req.session.email = email
 
-            console.log("Session:",req.session)
+            req.session.username = row.name
 
-            console.log('Login successful for:', email)
+            console.log("\n",req.session)
+
+            console.log('\nLogin successful for:', email)
 
             res.redirect('/')
 
@@ -542,31 +571,44 @@ app.use(custom500)
 
 // Define a function to restart the server
 
-function restartServer() {
+// function restartServer() {
 
-    console.log('Restarting server...')
+//     console.log('Restarting server...')
 
-    server.close(() => {
+//     server.close(() => {
 
-        console.log('Server closed')
+//         console.log('Server closed')
 
-        // Start the server again
+//         // Start the server again
 
-        server.listen(PORT, () => {
+//         server.listen(PORT, () => {
 
-            console.log(`\nPfcode-stations is running on: ${HOST}:${PORT}`)
+//             console.log(`\nPfcode-stations is running on: ${url}`)
 
-        })
+//         })
 
-    })
+//     })
 
-}
+// }
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
 
-    console.log(`\nPfcode-stations is running on: ${HOST}:${PORT}`)
+    console.log(`\nPfcode-stations is running on: ${url}`)
 
 })
+
+
+io.on('connection', (socket) => {
+
+    console.log('\nA user connected')
+
+    socket.on('disconnect', () => {
+
+        console.log('user disconnected')
+
+    })
+})
+
 
 process.on('SIGINT', () => {
 

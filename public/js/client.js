@@ -1,6 +1,12 @@
 
 "use strict"
 
+// Use the socket.io client library to connect to the server and get the url
+
+const socket = io()
+
+const baseUrl = socket.io.uri
+
 let fav = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill flex align-self-center fav-true" viewBox="0 0 16 16">
 <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
 </svg>`
@@ -9,60 +15,7 @@ let unfav = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill
 <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
 </svg>`
 
-const baseUrl = "http://localhost:5050"
 
-
-// function getAll()
-// {
-//     let config = {
-//         method: 'get',
-//         url: `${baseUrl}/radio/`,
-//         headers: {
-//             'Content-Type': 'application/json'
-//         }
-//     };
-
-//     axios(config)
-//     .then(function (response) {
-
-//         //console.log(JSON.stringify(response.data))
-
-//         let data = response.data
-
-//         let html = `<div class='flex flex-column pa-all-1' draggable='true'>`
-
-//         for (const radio of data) {
-
-//             html += `<div title='${radio.name}' class='flex flex-column js-radio radio-guide' draggable='true'>`
-//             html += `<div class="pa-b-half flex flex-row">`
-//             html += `<div class='value flex-1'>${radio.name}</div>`;
-//             html += `</div>`
-//             html += ` <div class="flex flex-column">`
-//             html += `
-//                 <audio controls>
-//                     <source src='${radio.url}' type='audio/ogg'>
-//                     <source src='${radio.url}' type='audio/mpeg'>
-//                     <source src='${radio.url}' type='audio/mp3'>
-//                     Your browser does not support the audio element.
-//                 </audio>`
-//             html += `</div>`
-//             html += `</div>`
-//         }
-
-//         html += `</div>`
-
-//         document.getElementById('list').innerHTML = html
-
-
-
-//     })
-//     .catch(function (error) {
-
-//         console.log(error)
-
-//     })
-
-// }
 
 function getList()
 {
@@ -272,6 +225,31 @@ function isValidURL(value) {
 
 $(document).ready(function($) {
 
+    let user = document.getElementById('user').value
+
+    let config = {
+        method: 'get',
+        url: `${baseUrl}/api/session-data/`,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    axios(config)
+    .then(function (response) {
+
+        console.log(JSON.stringify(response.data))
+
+        let data = response.data
+
+        console.log(data.user.username)
+
+        let html = `<span class="user-name flex self-center pa-r-1">${data.user.username}</span>`
+
+        document.getElementById('user').innerHTML = html
+
+    })
+
     let radioAdd = document.getElementById('radio-add')
 
     radioAdd.onclick = function()
@@ -329,7 +307,7 @@ $(document).ready(function($) {
             })
         }
 
-        window.location.reload()
+        //window.location.reload()
 
     }
 
@@ -428,6 +406,26 @@ $(document).ready(function($) {
         }
 
     }
+
+    // const logoutButton = document.getElementById('logout-button')
+
+    // logoutButton.addEventListener('click', (e) => {
+
+    //     e.preventDefault()
+
+    //     axios.post('/logout')
+    //     .then(response => {
+
+    //         window.location.href = '/'
+
+    //     })
+    //     .catch(error => {
+
+    //         console.log('Error logging out', error)
+
+    //     })
+
+    // })
 
     getList()
 
